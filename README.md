@@ -12,10 +12,6 @@
   <a href="https://discord.gg/xxx"><img src="https://img.shields.io/badge/Discord-加入社区-5865F2?logo=discord" alt="Discord"></a>
 </p>
 
-<p align="center">
-  <img src="assets/banner.png" alt="AnotherYou Banner" width="100%"/>
-</p>
-
 **下线后，你的AI分身继续替你活下去**  
 一个开源的**持久AI数字人虚拟世界框架**，基于Minecraft，让每个人拥有一个24/7在线、会行走、会思考、会赚钱、会社交的**另一个你**。
 
