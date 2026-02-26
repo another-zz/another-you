@@ -42,51 +42,69 @@ python start.py --mode=local --ai-name="你的名字的分身"
 
 ---
 
+## 🛠 技术栈
+
+| 模块 | 技术 |
+|------|------|
+| **游戏底座** | PaperMC (Minecraft Java 1.21+) |
+| **AI大脑** | LangGraph + Grok-4 / Claude 3.5 / Qwen2.5 + Mineflayer |
+| **记忆系统** | Chroma / Pinecone 向量数据库（长期记忆） |
+| **持久世界** | PostgreSQL + Redis |
+| **前端** | React + Tauri（离线指令面板） |
+| **渲染** | Minecraft原生 + UE5 Nanite可选 |
+
+---
+
 ## 📁 项目结构
 
 ```
 another-you/
-├── core/               # 核心AI引擎
-│   ├── agent.py       # AI分身主体
-│   ├── memory.py      # 记忆系统
-│   └── personality.py # 个性化模块
-├── world/             # 虚拟世界接口
-│   ├── minecraft/     # Minecraft连接器
-│   └── unreal/        # UE5渲染器（可选）
-├── server/            # 服务端
-│   ├── api.py         # REST API
-│   └── websocket.py   # 实时通信
-├── web/               # 前端控制面板
-├── tests/             # 测试
-└── docs/              # 文档
+├── agents/          # AI分身核心（分层代理）
+├── world/           # 世界生成、物理、数据库
+├── ui/              # Web/App指令面板
+├── docs/            # 文档
+├── examples/        # 指令示例
+├── tests/           # 测试用例
+├── LICENSE
+└── README.md
 ```
 
 ---
 
-## 🛠️ 技术栈
+## 🎯 路线图（Roadmap）
 
-- **AI引擎**: Python + PyTorch + LangChain
-- **Minecraft连接**: Mineflayer (Node.js) + Python桥接
-- **服务端**: FastAPI + WebSocket
-- **前端**: React + Three.js
-- **数据库**: PostgreSQL + Redis
+| 版本 | 目标 |
+|------|------|
+| **v0.1**（当前）| MVP：单人本地世界 + 简单指令执行 |
+| **v0.5** | 多人共享世界 + AI社交 |
+| **v1.0** | 1000+ AI同时在线 + 自动建社会 |
+| **v2.0** | UE5真实画面 + NFT土地 + 跨平台App |
 
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 PR！
+欢迎PR！一起把"另一个你"做成2026年最酷的开源AI项目！
 
 ---
 
-## 📄 许可证
+## 🤝 如何贡献
 
-MIT License - 详见 [LICENSE](LICENSE)
+1. **Fork** 本仓库
+2. 创建 feature 分支 (`git checkout -b feature/awesome-feature`)
+3. 提交改动 (`git commit -m 'Add awesome feature'`)
+4. 推送到分支 (`git push origin feature/awesome-feature`)
+5. 提交 **Pull Request**
+
+详细贡献指南 → [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ---
 
-## 🌟 Star History
+## 📄 License
 
-如果这个项目对你有帮助，请给个 Star ⭐
+本项目采用 **MIT License** —— 自由使用、修改、分发。
+
+---
+
+> "现实暂停，另一个你继续。"
+
+欢迎Star ⭐ 支持我们！
+有任何想法随时在 [Issues](https://github.com/another-zz/another-you/issues) 提出～
 
 [![Star History Chart](https://api.star-history.com/svg?repos=another-zz/another-you&type=Date)](https://star-history.com/#another-zz/another-you&Date)
