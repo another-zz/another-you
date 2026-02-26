@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="AnotherYou Logo" width="200"/>
+</p>
+
 # 另一个你 - AnotherYou
 
 **重启你的人生**
