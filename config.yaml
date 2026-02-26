@@ -1,0 +1,31 @@
+# AnotherYou 配置文件
+
+# AI设置
+ai:
+  tick_interval: 5  # 决策间隔（秒）
+  memory_limit: 1000  # 最大记忆条数
+  auto_save: true  # 自动保存
+
+# Minecraft连接
+minecraft:
+  host: "localhost"
+  port: 25565
+  auto_reconnect: true
+  
+# 世界设置
+world:
+  max_agents: 100  # 最大AI数量
+  trade_radius: 100  # 交易范围
+  friendship_decay: 0.1  # 友谊衰减
+  
+# 经济设置
+economy:
+  price_update_interval: 600  # 价格更新间隔（秒）
+  inflation_rate: 0.02  # 通胀率
+  
+# LLM设置（预留）
+llm:
+  provider: "kimi"  # kimi / openai / local
+  model: "k2p5"
+  temperature: 0.7
+  max_tokens: 2000

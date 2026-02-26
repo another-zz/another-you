@@ -1,19 +1,16 @@
-# AnotherYou v0.1 依赖
+# AnotherYou v0.1
+# AI数字分身 - "另一个你"
 
-# 异步支持
+# 核心依赖
 asyncio-mqtt>=0.16.0
-
-# HTTP客户端（用于LLM API）
 aiohttp>=3.9.0
 requests>=2.31.0
 
 # 数据存储
 chromadb>=0.4.0
 numpy>=1.24.0
-
-# 配置管理
-pydantic>=2.5.0
-pyyaml>=6.0.1
+sqlite3-python
 
 # 工具
 python-dotenv>=1.0.0
+pydantic>=2.5.0
