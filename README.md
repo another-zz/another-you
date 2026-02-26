@@ -1,14 +1,20 @@
 <p align="center">
-  <img src="assets/logo.png" alt="AnotherYou Logo" width="200"/>
+  <img src="assets/banner.png" alt="AnotherYou Banner" width="100%"/>
 </p>
 
-# 另一个你 - AnotherYou
+<p align="center">
+  <img src="assets/logo.png" alt="AnotherYou Logo" width="120"/>
+</p>
 
-**重启你的人生**
+<h1 align="center">另一个你 - AnotherYou</h1>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/another-zz/another-you.svg)](https://github.com/another-zz/another-you/stargazers)
-[![Discord](https://img.shields.io/badge/Discord-加入社区-5865F2?logo=discord)](https://discord.gg/xxx)
+<p align="center"><strong>重启你的人生</strong></p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://github.com/another-zz/another-you/stargazers"><img src="https://img.shields.io/github/stars/another-zz/another-you.svg" alt="GitHub stars"></a>
+  <a href="https://discord.gg/xxx"><img src="https://img.shields.io/badge/Discord-加入社区-5865F2?logo=discord" alt="Discord"></a>
+</p>
 
 **下线后，你的AI分身继续替你活下去**  
 一个开源的**持久AI数字人虚拟世界框架**，基于Minecraft，让每个人拥有一个24/7在线、会行走、会思考、会赚钱、会社交的**另一个你**。
