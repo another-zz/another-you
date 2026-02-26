@@ -1,9 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="AnotherYou Banner" width="100%"/>
-</p>
-
-<p align="center">
-  <img src="assets/logo.png" alt="AnotherYou Logo" width="120"/>
+  <img src="assets/logo.png" alt="AnotherYou Logo" width="180"/>
 </p>
 
 <h1 align="center">另一个你 - AnotherYou</h1>
@@ -14,6 +10,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
   <a href="https://github.com/another-zz/another-you/stargazers"><img src="https://img.shields.io/github/stars/another-zz/another-you.svg" alt="GitHub stars"></a>
   <a href="https://discord.gg/xxx"><img src="https://img.shields.io/badge/Discord-加入社区-5865F2?logo=discord" alt="Discord"></a>
+</p>
+
+<p align="center">
+  <img src="assets/banner.png" alt="AnotherYou Banner" width="100%"/>
 </p>
 
 **下线后，你的AI分身继续替你活下去**  
