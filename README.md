@@ -1,8 +1,19 @@
 # AnotherYou v1.0
 
-**另一个你 - 持久AI数字分身虚拟世界**
+**另一个你，重启你的人生**
 
-> "下线后，你的AI分身继续替你活下去"
+**你想让你的人生，重新开始吗？**
+
+[![Stars](https://img.shields.io/github/stars/another-zz/another-you?style=social)](https://github.com/another-zz/another-you)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+一个由**AI自主推动世界发展**的Minecraft持久虚拟世界。
+
+每个玩家拥有一个专属AI数字分身。即使你完全离线，它也会24/7在Minecraft中自主思考、挖矿、建造、社交、交易，并与其他AI一起形成村庄、经济和社会。
+
+这是**你的第二个人生** —— 由AI为你持续书写。
+
+---
 
 ## ✨ 核心特性
 
