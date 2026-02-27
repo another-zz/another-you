@@ -83,7 +83,8 @@ class LLMClient:
             
             # 尝试多个可能的 API 地址
             base_urls = [
-                "https://api.kimi.com/coding/",  # Kimi Code
+                "https://api.kimi.com/coding",    # Kimi Code (去掉末尾/)
+                "https://api.kimi.com/coding/v1", # 可能的 v1 路径
                 "https://api.moonshot.cn/v1",     # 官方 Kimi
             ]
             
@@ -143,8 +144,8 @@ class LLMClient:
             return self._mock_response(messages)
             
         try:
-            # Kimi Code 模型名称可能不同，尝试多个
-            models = ["kimi-k2-turbo-preview", "kimi-k2.5", "kimi", "moonshot-v1-8k"]
+            # Kimi Code 模型名称
+            models = ["kimi-coding", "kimi-k2-turbo-preview", "kimi-k2.5", "kimi"]
             
             for model in models:
                 try:
