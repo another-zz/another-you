@@ -209,10 +209,21 @@ async def main():
     parser.add_argument("--names", nargs="+", default=["Alice", "Bob", "Charlie"], help="AI名称列表")
     parser.add_argument("--host", default="localhost", help="Minecraft服务器地址")
     parser.add_argument("--port", type=int, default=25565, help="Minecraft服务器端口")
-    parser.add_argument("--api-key", default=None, help="API Key")
+    parser.add_argument("--api-key", default=os.getenv("KIMI_API_KEY"), help="API Key (或设置 KIMI_API_KEY 环境变量)")
+    parser.add_argument("--provider", default="kimi", help="LLM提供商 (kimi/openai/mock)")
     parser.add_argument("--web-port", type=int, default=8080, help="Web面板端口")
     
     args = parser.parse_args()
+    
+    # 检查API Key
+    if not args.api_key:
+        print("⚠️  未提供 API Key，将使用 mock 模式")
+        print("   设置方法:")
+        print("   1. export KIMI_API_KEY='sk-your-key'")
+        print("   2. python3 dashboard.py --api-key 'sk-your-key'")
+        args.provider = "mock"
+    else:
+        print(f"✅ 使用 {args.provider.upper()} API: {args.api_key[:10]}...")
     
     # 启动Web服务器（后台线程）
     web_thread = threading.Thread(target=start_web_server, args=(args.web_port,), daemon=True)
