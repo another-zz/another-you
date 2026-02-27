@@ -17,9 +17,17 @@ services:
       VIEW_DISTANCE: 10
       ENABLE_COMMAND_BLOCK: "true"
       SPAWN_PROTECTION: 0
+      # 禁用自动下载配置（避免网络问题）
+      SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
+      # 代理配置
+      HTTP_PROXY: "http://host.docker.internal:7890"
+      HTTPS_PROXY: "http://host.docker.internal:7890"
+      NO_PROXY: "localhost,127.0.0.1"
     volumes:
       - ./world/minecraft:/data
     restart: unless-stopped
+    # 如果需要代理
+    # network_mode: host
     
   # 可选：Web面板
   web:
