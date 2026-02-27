@@ -3,7 +3,7 @@
 v0.11 多AI启动器 - 深度社会演化
 
 使用方法:
-    python multi_agent_v11.py --names Alice Bob Charlie
+    python main.py --names Alice Bob Charlie
 """
 
 import asyncio
@@ -13,7 +13,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.agent_v11 import Agent
+from core.agent import Agent
 from core.world_coordinator import WorldCoordinator
 from core.social_network import SocialNetwork
 
@@ -98,11 +98,11 @@ async def main():
         epilog="""
 示例:
   # 快速测试
-  python multi_agent_v11.py --names Alice Bob Charlie
+  python main.py --names Alice Bob Charlie
   
   # 真实LLM
   export KIMI_API_KEY="sk-..."
-  python multi_agent_v11.py --names Alice Bob
+  python main.py --names Alice Bob
         """
     )
     parser.add_argument(

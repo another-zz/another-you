@@ -1,0 +1,50 @@
+[
+  {
+    "id": "a7c9b2eba8ea",
+    "content": "explore: 技能已学习（模拟模式）",
+    "memory_type": "observation",
+    "importance": 0.6,
+    "timestamp": "2026-02-27T14:52:35.204594",
+    "access_count": 2,
+    "last_access": "2026-02-27T14:52:39.209963",
+    "source": "action",
+    "location": {
+      "x": 0,
+      "y": 64,
+      "z": 0
+    },
+    "related_memories": []
+  },
+  {
+    "id": "510c5f9fe13e",
+    "content": "explore: 完成",
+    "memory_type": "observation",
+    "importance": 0.4,
+    "timestamp": "2026-02-27T14:52:37.207455",
+    "access_count": 1,
+    "last_access": "2026-02-27T14:52:39.209963",
+    "source": "action",
+    "location": {
+      "x": 3,
+      "y": 64,
+      "z": 1
+    },
+    "related_memories": []
+  },
+  {
+    "id": "6de4db33ecc1",
+    "content": "explore: 完成",
+    "memory_type": "observation",
+    "importance": 0.4,
+    "timestamp": "2026-02-27T14:52:40.211164",
+    "access_count": 0,
+    "last_access": null,
+    "source": "action",
+    "location": {
+      "x": -5,
+      "y": 64,
+      "z": -3
+    },
+    "related_memories": []
+  }
+]
