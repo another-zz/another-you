@@ -67,8 +67,11 @@ class LLMClient:
                 base_url="https://api.moonshot.cn/v1"
             )
             print(f"[LLM] ✅ Kimi API 已连接")
-        except ImportError:
+        except ImportError as e:
+            import sys
             print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
+            print(f"[LLM] 当前Python: {sys.executable}")
+            print(f"[LLM] 错误: {e}")
             self.provider = "mock"
             
     def _init_openai(self):
