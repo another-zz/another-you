@@ -69,16 +69,60 @@
             if (current && agents[current]) {
                 const a = agents[current];
                 document.getElementById('detail-title').textContent = '📊 ' + current;
-                document.getElementById('detail').innerHTML = `
+                
+                // 基础状态
+                let html = `
                     <div class="stats">
                         <div class="stat"><div class="stat-value">${Math.round(a.energy)}</div><small>能量</small></div>
+                        <div class="stat"><div class="stat-value">${Math.round(a.hunger||0)}</div><small>饥饿</small></div>
                         <div class="stat"><div class="stat-value">${a.total_actions}</div><small>行动</small></div>
                         <div class="stat"><div class="stat-value">${a.memory_count}</div><small>记忆</small></div>
+                        <div class="stat"><div class="stat-value">${a.llm_calls||0}</div><small>LLM调用</small></div>
+                        <div class="stat"><div class="stat-value">${a.skills?.length||0}</div><small>技能</small></div>
                     </div>
-                    <p>📋 ${a.current_plan}</p>
-                    <p>🎒 ${JSON.stringify(a.inventory)}</p>
-                    <p>👥 友:${a.social?.friends||0} 敌:${a.social?.enemies||0}</p>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#1a1a2e; border-radius:8px;">
+                        <div style="color:#888; font-size:12px; margin-bottom:5px;">📋 当前计划</div>
+                        <div>${a.current_plan}</div>
+                    </div>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#1a1a2e; border-radius:8px;">
+                        <div style="color:#888; font-size:12px; margin-bottom:5px;">📍 位置</div>
+                        <div>X:${a.location?.x||0} Y:${a.location?.y||0} Z:${a.location?.z||0}</div>
+                    </div>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#1a1a2e; border-radius:8px;">
+                        <div style="color:#888; font-size:12px; margin-bottom:5px;">🎒 背包</div>
+                        <div>${Object.entries(a.inventory||{}).map(([k,v])=>`${k}:${v}`).join(', ') || '空'}</div>
+                    </div>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#1a1a2e; border-radius:8px;">
+                        <div style="color:#888; font-size:12px; margin-bottom:5px;">🎯 已掌握技能</div>
+                        <div>${a.skills?.map(s=>`<span style="display:inline-block; padding:4px 8px; margin:2px; background:#252540; border-radius:4px; font-size:12px;">${s}</span>`).join('') || '无'}</div>
+                    </div>
+                    
+                    <div style="margin:15px 0; padding:15px; background:#1a1a2e; border-radius:8px;">
+                        <div style="color:#888; font-size:12px; margin-bottom:5px;">👥 社会关系</div>
+                        <div>朋友: ${a.social?.friends||0} | 敌人: ${a.social?.enemies||0} | 声望: ${Math.round(a.social?.reputation||50)}</div>
+                    </div>
                 `;
+                
+                // 近期记忆
+                if (a.recent_memories && a.recent_memories.length > 0) {
+                    html += `
+                        <div style="margin:15px 0;">
+                            <div style="color:#888; font-size:12px; margin-bottom:10px;">💭 近期记忆</div>
+                            ${a.recent_memories.map(m => `
+                                <div style="padding:10px; margin:5px 0; background:#1a1a2e; border-radius:8px; border-left:3px solid ${m.type==='reflection'?'#f59e0b':'#667eea'};">
+                                    <div style="font-size:11px; color:#666;">${m.time} · ${m.type}</div>
+                                    <div style="font-size:13px;">${m.content}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('detail').innerHTML = html;
             }
             
             document.getElementById('logs').innerHTML = logs.slice(-10).map(l => 

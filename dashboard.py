@@ -67,16 +67,45 @@ def start_web_server(port=8080):
     server.serve_forever()
 
 def update_agent_state(agent):
-    """更新单个AI的状态到全局状态"""
+    """更新单个AI的状态到全局状态（包含内部信息）"""
     status = agent.get_status()
+    
+    # 解析记忆数量
+    memory_count = 0
+    if "memory_summary" in status:
+        try:
+            import re
+            match = re.search(r'总计(\d+)条', status["memory_summary"])
+            if match:
+                memory_count = int(match.group(1))
+        except:
+            pass
+    
+    # 获取近期记忆（从 agent.memory）
+    recent_memories = []
+    if hasattr(agent, 'memory') and agent.memory:
+        memories = agent.memory.get_recent_observations(hours=1)
+        for m in memories[-5:]:  # 最近5条
+            recent_memories.append({
+                "time": m.timestamp.strftime("%H:%M") if hasattr(m, 'timestamp') else "--:--",
+                "content": m.content[:50] + "..." if len(m.content) > 50 else m.content,
+                "type": m.memory_type if hasattr(m, 'memory_type') else "observation"
+            })
+    
     world_state["agents"][agent.player_name] = {
         "name": agent.player_name,
         "energy": status.get("energy", 0),
+        "hunger": status.get("hunger", 0),
         "total_actions": status.get("total_actions", 0),
         "inventory": status.get("inventory", {}),
-        "current_plan": status.get("current_plan", ""),
-        "memory_count": 0,  # 从status解析
-        "social": status.get("social", {})
+        "location": status.get("location", {"x": 0, "y": 0, "z": 0}),
+        "current_plan": status.get("current_plan", "无计划"),
+        "skills": status.get("skills", []),
+        "memory_count": memory_count,
+        "recent_memories": recent_memories,
+        "social": status.get("social", {}),
+        "is_in_mc": status.get("is_in_mc", False),
+        "llm_calls": status.get("llm_stats", {}).get("total_calls", 0)
     }
 
 def add_log(agent_name, message, log_type="action"):
