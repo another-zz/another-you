@@ -199,14 +199,16 @@ class Agent:
 
         # 5. 执行
         result = await self._execute(action)
+        print(f"  [{self.player_name}] 执行结果: {result}")
 
-        # 6. 记录
+        # 6. 记录记忆
         self.memory.add_observation(
             f"{action}: {result}",
             importance=0.4 if "完成" in result else 0.6,
             location=self.location.copy(),
             source="action"
         )
+        print(f"  [{self.player_name}] 记忆已记录")
 
         # 7. 社交（每5个tick检查）
         if self.coordinator and self.total_actions % 5 == 0:

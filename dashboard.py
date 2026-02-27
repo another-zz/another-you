@@ -185,9 +185,8 @@ async def run_world(agent_names, mc_host, mc_port, api_key=None, provider=None, 
                 update_agent_state(agent)
                 print(f"[Tick {tick}] {agent.player_name} 状态已更新")
                 
-                # 记录行动日志
-                if agent.total_actions % 5 == 0:
-                    add_log(agent.player_name, f"执行了行动 #{agent.total_actions}")
+                # 记录行动日志（每次行动都记录）
+                add_log(agent.player_name, f"执行了行动 #{agent.total_actions}")
             
             # 同时运行所有 AI
             await asyncio.gather(*[run_agent_tick(agent) for agent in agents])
