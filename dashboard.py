@@ -164,12 +164,18 @@ async def run_world(agent_names, mc_host, mc_port, api_key=None, provider=None):
                 # 执行一个tick
                 await agent._life_tick()
                 
-                # 更新状态到全局
+                # 更新状态到全局（包含最新社交关系）
                 update_agent_state(agent)
                 
                 # 记录行动日志
                 if agent.total_actions % 5 == 0:
                     add_log(agent.player_name, f"执行了行动 #{agent.total_actions}")
+            
+            # 额外更新一次社交状态（确保社交关系变化被捕获）
+            for agent in agents:
+                if agent.social_network:
+                    # 强制刷新社交数据
+                    world_state["agents"][agent.player_name]["social"] = agent.social_network.get_social_summary(agent.player_name)
             
             # 记录社交事件
             if tick % 10 == 0:
