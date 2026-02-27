@@ -118,3 +118,9 @@ $ python start.py --name="小明"
 ## 📄 许可证
 
 MIT License
+
+## 🤝 如何贡献
+欢迎任何形式的贡献！无论你是想提交代码、报告bug、提出新功能，还是分享想法，都非常欢迎。
+
+提交 Issue 或 Pull Request
+加入讨论：GitHub Discussions
