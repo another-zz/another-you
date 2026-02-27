@@ -205,12 +205,26 @@ async def run_world(agent_names, mc_host, mc_port, api_key=None, provider=None):
     print(f"AI数量: {len(agents)}")
 
 async def main():
+    # 先读取配置文件
+    import yaml
+    config = {}
+    try:
+        with open('config.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+    except:
+        pass
+    
+    # 从配置文件获取默认值
+    llm_config = config.get('llm', {})
+    default_provider = llm_config.get('provider', 'mock')
+    default_api_key = llm_config.get('api_key', '')
+    
     parser = argparse.ArgumentParser(description="AnotherYou - AI实时观测系统")
     parser.add_argument("--names", nargs="+", default=["Alice", "Bob", "Charlie"], help="AI名称列表")
     parser.add_argument("--host", default="localhost", help="Minecraft服务器地址")
     parser.add_argument("--port", type=int, default=25565, help="Minecraft服务器端口")
-    parser.add_argument("--api-key", default=os.getenv("KIMI_API_KEY"), help="API Key (或设置 KIMI_API_KEY 环境变量)")
-    parser.add_argument("--provider", default="kimi", help="LLM提供商 (kimi/openai/mock)")
+    parser.add_argument("--api-key", default=default_api_key or os.getenv("KIMI_API_KEY"), help="API Key (优先级: 命令行 > 配置文件 > 环境变量)")
+    parser.add_argument("--provider", default=default_provider, help="LLM提供商 (kimi/openai/mock)")
     parser.add_argument("--web-port", type=int, default=8080, help="Web面板端口")
     
     args = parser.parse_args()
