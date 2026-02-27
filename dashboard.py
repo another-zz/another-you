@@ -177,10 +177,13 @@ async def run_world(agent_names, mc_host, mc_port, api_key=None, provider=None, 
 
             for agent in agents:
                 # 执行一个tick
+                print(f"[Tick {tick}] {agent.player_name} 开始决策...")
                 await agent._life_tick()
+                print(f"[Tick {tick}] {agent.player_name} 决策完成")
 
                 # 更新状态到全局（包含最新社交关系）
                 update_agent_state(agent)
+                print(f"[Tick {tick}] {agent.player_name} 状态已更新")
 
                 # 记录行动日志
                 if agent.total_actions % 5 == 0:

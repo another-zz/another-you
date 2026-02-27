@@ -175,10 +175,15 @@ class Agent:
         relevant_memories = self.memory.retrieve(query, context=observation, top_k=5)
         memory_contents = [m.content for m in relevant_memories]
 
-        # 4. LLM决策
-        action = self.brain.decide(
-            observation, memory_contents, self.learned_skills,
-            plan=self.current_hour_plan
+        # 4. LLM决策（使用线程池避免阻塞）
+        import asyncio
+        loop = asyncio.get_event_loop()
+        action = await loop.run_in_executor(
+            None, 
+            lambda: self.brain.decide(
+                observation, memory_contents, self.learned_skills,
+                plan=self.current_hour_plan
+            )
         )
 
         # 清理action
