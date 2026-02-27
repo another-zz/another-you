@@ -70,38 +70,42 @@ class LLMClient:
         return None
 
     def _init_kimi(self):
-        """初始化Kimi客户端 - 使用Anthropic兼容接口"""
+        """初始化Kimi客户端 - 直接调用 Kimi Code API"""
         try:
-            # 尝试使用 Anthropic SDK
-            from anthropic import Anthropic
+            import httpx
             
-            # 使用环境变量中的 base_url 或默认
-            base_url = os.getenv("ANTHROPIC_BASE_URL", "https://api.moonshot.cn/anthropic/")
+            self.base_url = "https://api.kimi.com/coding/v1"
+            self.model = "kimi-for-coding"
+            self.api_key = self.api_key
             
-            self.client = Anthropic(
-                api_key=self.api_key,
-                base_url=base_url
+            # 使用 httpx 直接请求，设置正确的 User-Agent
+            self.http_client = httpx.Client(
+                base_url=self.base_url,
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "User-Agent": "KimiCLI/1.3",
+                    "Content-Type": "application/json"
+                },
+                timeout=60.0
             )
-            self.model = "claude-sonnet-4-20250514"  # Kimi K2 使用这个模型名
-            self.use_anthropic = True
-            print(f"[LLM] ✅ Kimi API 已连接 (Anthropic兼容接口)")
-            print(f"[LLM] 使用 base_url: {base_url}")
             
-        except ImportError:
-            # 回退到 OpenAI 接口
-            try:
-                from openai import OpenAI
-                self.client = OpenAI(
-                    api_key=self.api_key,
-                    base_url="https://api.moonshot.cn/v1"
-                )
-                self.model = "kimi-k2.5"
-                self.use_anthropic = False
-                print(f"[LLM] ✅ Kimi API 已连接 (OpenAI兼容接口)")
-            except ImportError as e:
-                print(f"[LLM] ⚠️ 请安装依赖: pip install anthropic openai")
-                print(f"[LLM] 错误: {e}")
-                self.provider = "mock"
+            # 测试连接
+            test_response = self.http_client.post(
+                "/chat/completions",
+                json={
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": "hi"}],
+                    "max_tokens": 5
+                }
+            )
+            test_response.raise_for_status()
+            print(f"[LLM] ✅ Kimi Code API 已连接 (直接调用)")
+            print(f"[LLM] 使用模型: {self.model}")
+            
+        except Exception as e:
+            print(f"[LLM] ⚠️ Kimi Code 连接失败: {e}")
+            print(f"[LLM] 切换到 mock 模式")
+            self.provider = "mock"
 
     def _init_litellm(self):
         """初始化LiteLLM代理客户端"""
@@ -144,34 +148,35 @@ class LLMClient:
         if self.provider == "mock":
             return self._mock_response(messages)
 
-        # Kimi 使用 Anthropic 兼容接口
-        if self.provider == "kimi" and hasattr(self, 'use_anthropic') and self.use_anthropic:
+        # Kimi 使用 httpx 直接请求
+        if self.provider == "kimi":
             try:
-                # 转换消息格式为 Anthropic 格式
-                system_msg = ""
-                anthropic_messages = []
-                for msg in messages:
-                    if msg["role"] == "system":
-                        system_msg = msg["content"]
-                    else:
-                        anthropic_messages.append({
-                            "role": msg["role"],
-                            "content": msg["content"]
-                        })
+                import time
+                start = time.time()
                 
-                response = self.client.messages.create(
-                    model=self.model,
-                    messages=anthropic_messages,
-                    system=system_msg if system_msg else None,
-                    temperature=temperature,
-                    max_tokens=max_tokens
+                print(f"[LLM] 调用 {self.model}，请稍候...")
+                
+                response = self.http_client.post(
+                    "/chat/completions",
+                    json={
+                        "model": self.model,
+                        "messages": messages,
+                        "temperature": temperature,
+                        "max_tokens": max_tokens
+                    }
                 )
+                response.raise_for_status()
+                data = response.json()
                 
-                self.total_tokens += response.usage.input_tokens + response.usage.output_tokens
-                return response.content[0].text
+                elapsed = time.time() - start
+                result = data["choices"][0]["message"]["content"]
+                print(f"[LLM] ✅ 调用成功，耗时 {elapsed:.2f}秒，返回: {result[:50]}...")
+                
+                self.total_tokens += data["usage"]["total_tokens"]
+                return result
                 
             except Exception as e:
-                print(f"[LLM] Kimi Anthropic 调用失败: {e}")
+                print(f"[LLM] Kimi 调用失败: {e}")
                 return self._mock_response(messages)
 
         # OpenAI / LiteLLM 使用 OpenAI SDK
