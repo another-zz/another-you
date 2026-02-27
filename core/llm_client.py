@@ -140,19 +140,46 @@ class LLMClient:
         return "explore"
         
     def _mock_decision(self, prompt: str) -> str:
-        """模拟决策"""
-        if "能量" in prompt and ("低" in prompt or "30" in prompt):
-            return "rest"
-        if "饥饿" in prompt and ("高" in prompt or "70" in prompt):
-            return "gather_food"
-        if "木头" in prompt or "wood" in prompt.lower():
-            return "gather_wood"
-        if "石头" in prompt or "stone" in prompt.lower():
-            return "gather_stone"
-            
+        """模拟决策 - 带生存优先级"""
         import random
-        actions = ["explore", "gather_wood", "gather_stone", "rest", "socialize"]
-        return random.choice(actions)
+        import re
+        
+        # 从prompt中提取能量和饥饿值
+        energy = 100
+        hunger = 0
+        
+        energy_match = re.search(r'能量[:\s]+(\d+)', prompt)
+        hunger_match = re.search(r'饥饿[:\s]+(\d+)', prompt)
+        
+        if energy_match:
+            energy = int(energy_match.group(1))
+        if hunger_match:
+            hunger = int(hunger_match.group(1))
+        
+        # ===== 生存优先级判断（最高优先级）=====
+        
+        # 1. 能量极低 -> 必须休息
+        if energy < 20:
+            return "rest"
+        
+        # 2. 饥饿极高 -> 必须找食物
+        if hunger > 80:
+            return "gather_food"
+        
+        # 3. 能量偏低 -> 优先休息
+        if energy < 40:
+            return "rest"
+        
+        # 4. 饥饿偏高 -> 优先找食物
+        if hunger > 50:
+            return "gather_food"
+        
+        # ===== 资源采集优先级（平衡发展）=====
+        
+        # 5. 随机多样化行动（避免一直explore）
+        actions = ["gather_wood", "gather_stone", "gather_food", "explore", "socialize"]
+        weights = [0.30, 0.30, 0.20, 0.10, 0.10]  # 优先采集资源
+        return random.choices(actions, weights=weights)[0]
         
     def _mock_reflection(self, prompt: str) -> str:
         """模拟反思"""

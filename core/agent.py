@@ -359,27 +359,31 @@ class Agent:
             return await self._execute_sim(action)
             
     async def _execute_sim(self, action: str) -> str:
-        """模拟执行"""
+        """模拟执行 - 修复状态变化"""
         effects = {
-            "rest": lambda: self._mod(20, 5),
-            "gather_wood": lambda: self._mod(-10, 10) or self._add_item("wood", 3),
-            "gather_stone": lambda: self._mod(-15, 15) or self._add_item("stone", 2),
-            "gather_food": lambda: self._mod(-5, 5) or self._mod(0, -30),
-            "explore": lambda: self._mod(-5, 5) or self._move(),
-            "socialize": lambda: self._mod(-3, 3),
-            "mine": lambda: self._mod(-15, 15) or self._add_item("stone", 2),
-            "chop_tree": lambda: self._mod(-10, 10) or self._add_item("wood", 3),
+            "rest": lambda: self._mod(energy=+20, hunger=+5),  # 休息恢复能量，但会增加饥饿
+            "gather_wood": lambda: self._mod(energy=-10, hunger=+8) or self._add_item("wood", 3),
+            "gather_stone": lambda: self._mod(energy=-15, hunger=+10) or self._add_item("stone", 2),
+            "gather_food": lambda: self._mod(energy=-5, hunger=-25) or self._add_item("food", 2),  # 找食物减少饥饿
+            "explore": lambda: self._mod(energy=-8, hunger=+5) or self._move(),
+            "socialize": lambda: self._mod(energy=-3, hunger=+3),
+            "mine": lambda: self._mod(energy=-15, hunger=+10) or self._add_item("stone", 2),
+            "chop_tree": lambda: self._mod(energy=-10, hunger=+8) or self._add_item("wood", 3),
         }
         
         effect = effects.get(action, lambda: "未知")
         result = effect()
         
+        # 自然消耗：每tick都会略微增加饥饿
+        self.hunger = min(100, self.hunger + 2)
+        
         await asyncio.sleep(1)
         return result or "完成"
         
-    def _mod(self, e: float, h: float):
-        self.energy = max(0, min(100, self.energy + e))
-        self.hunger = min(100, self.hunger + h)
+    def _mod(self, energy: float = 0, hunger: float = 0):
+        """修改状态 - 参数名明确"""
+        self.energy = max(0, min(100, self.energy + energy))
+        self.hunger = max(0, min(100, self.hunger + hunger))
         
     def _add_item(self, item: str, count: int):
         self.inventory[item] = self.inventory.get(item, 0) + count
