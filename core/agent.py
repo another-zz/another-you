@@ -177,7 +177,12 @@ class Agent:
 
         # 4. LLM决策（使用线程池避免阻塞）
         import asyncio
+        import time
         loop = asyncio.get_event_loop()
+        
+        start_time = time.time()
+        print(f"  [{self.player_name}] 开始 LLM 决策...")
+        
         action = await loop.run_in_executor(
             None, 
             lambda: self.brain.decide(
@@ -185,6 +190,9 @@ class Agent:
                 plan=self.current_hour_plan
             )
         )
+        
+        elapsed = time.time() - start_time
+        print(f"  [{self.player_name}] LLM 决策完成，耗时: {elapsed:.2f}秒，动作: {action}")
 
         # 清理action
         action = self._sanitize_action(action)

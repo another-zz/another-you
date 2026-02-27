@@ -176,6 +176,9 @@ class LLMClient:
 
         # OpenAI / LiteLLM 使用 OpenAI SDK
         try:
+            import time
+            start = time.time()
+            
             # 根据 provider 选择模型
             if self.provider == "litellm":
                 model = getattr(self, 'model', 'kimi-coding')
@@ -184,6 +187,8 @@ class LLMClient:
             else:
                 model = "gpt-4"
 
+            print(f"[LLM] 调用 {model}，请稍候...")
+            
             response = self.client.chat.completions.create(
                 model=model,
                 messages=messages,
@@ -191,8 +196,9 @@ class LLMClient:
                 max_tokens=max_tokens
             )
 
+            elapsed = time.time() - start
             result = response.choices[0].message.content
-            print(f"[LLM] ✅ 调用成功，返回: {result[:50]}...")
+            print(f"[LLM] ✅ 调用成功，耗时 {elapsed:.2f}秒，返回: {result[:50]}...")
             
             self.total_tokens += response.usage.total_tokens
             return result
