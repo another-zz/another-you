@@ -175,20 +175,14 @@ class Agent:
         relevant_memories = self.memory.retrieve(query, context=observation, top_k=5)
         memory_contents = [m.content for m in relevant_memories]
 
-        # 4. LLM决策（使用线程池避免阻塞）
-        import asyncio
+        # 4. LLM决策（直接await，decide已经是async）
         import time
-        loop = asyncio.get_event_loop()
-        
         start_time = time.time()
         print(f"  [{self.player_name}] 开始 LLM 决策...")
         
-        action = await loop.run_in_executor(
-            None, 
-            lambda: self.brain.decide(
-                observation, memory_contents, self.learned_skills,
-                plan=self.current_hour_plan
-            )
+        action = await self.brain.decide(
+            observation, memory_contents, self.learned_skills,
+            plan=self.current_hour_plan
         )
         
         elapsed = time.time() - start_time
