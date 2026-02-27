@@ -1,6 +1,5 @@
 services:
   minecraft:
-    # 使用自建镜像，禁用自动下载
     build:
       context: .
       dockerfile: Dockerfile.mc
@@ -18,8 +17,18 @@ services:
       VIEW_DISTANCE: 10
       ENABLE_COMMAND_BLOCK: "true"
       SPAWN_PROTECTION: 0
+      # 禁用所有外部下载
+      SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
+      DISABLE_HEALTHCHECK: "true"
+      # 使用本地空配置
+      COPY_CONFIG_DEST: "/data/config"
     volumes:
       - ./world/minecraft:/data
+      # 挂载空目录阻止下载
+      - /dev/null:/config/paper-global.yml
+      - /dev/null:/config/paper-world-defaults.yml
+      - /dev/null:/config/spigot.yml
+      - /dev/null:/config/bukkit.yml
     restart: unless-stopped
     
   web:

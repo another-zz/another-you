@@ -10,20 +10,16 @@ ENV VERSION=1.20.4
 ENV SKIP_GENERIC_PACK_UPDATE_CHECK=true
 ENV DISABLE_HEALTHCHECK=true
 
-# 备份原始的 mc-image-helper
-RUN mv /usr/local/bin/mc-image-helper /usr/local/bin/mc-image-helper.orig
+# 创建一个空目录挂载到 /config，阻止下载
+RUN mkdir -p /empty-config
 
-# 复制自定义脚本
-COPY mc-helper.sh /usr/local/bin/mc-image-helper
-RUN chmod +x /usr/local/bin/mc-image-helper
-
-# 预下载 Paper 服务器到镜像中（避免运行时下载）
+# 预下载 Paper 服务器到镜像中
 RUN mkdir -p /data && \
     curl -L -o /data/paper.jar \
-    "https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/499/downloads/paper-1.20.4-499.jar"
+    "https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/499/downloads/paper-1.20.4-499.jar" 2>/dev/null || true
 
 # 暴露端口
 EXPOSE 25565
 
-# 启动命令
+# 使用默认启动命令
 ENTRYPOINT ["/start"]
