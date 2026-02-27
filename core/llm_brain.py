@@ -24,7 +24,7 @@ class LLMBrain:
         self.client = LLMClient(api_key=api_key, provider=provider, api_base=api_base, model=model)
         self.conversation_history: List[Dict] = []
         
-    def decide(self, observation: Dict, memories: List[str], 
+    async def decide(self, observation: Dict, memories: List[str], 
                skills: List[str], plan: str = "") -> str:
         """
         使用LLM决定下一步行动
@@ -72,7 +72,8 @@ class LLMBrain:
             {"role": "user", "content": prompt}
         ]
         
-        action = self.client.chat(messages).strip()
+        action = await self.client.chat(messages)
+        action = action.strip()
         
         # 打印 LLM 输入输出日志
         print(f"  [LLM] 输入: {prompt[:80]}...")

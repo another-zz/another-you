@@ -78,8 +78,8 @@ class LLMClient:
             self.model = "kimi-for-coding"
             self.api_key = self.api_key
             
-            # 使用 httpx 直接请求，设置正确的 User-Agent
-            self.http_client = httpx.Client(
+            # 使用 httpx.AsyncClient 支持异步
+            self.http_client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers={
                     "Authorization": f"Bearer {self.api_key}",
@@ -89,17 +89,7 @@ class LLMClient:
                 timeout=60.0
             )
             
-            # 测试连接
-            test_response = self.http_client.post(
-                "/chat/completions",
-                json={
-                    "model": self.model,
-                    "messages": [{"role": "user", "content": "hi"}],
-                    "max_tokens": 5
-                }
-            )
-            test_response.raise_for_status()
-            print(f"[LLM] ✅ Kimi Code API 已连接 (直接调用)")
+            print(f"[LLM] ✅ Kimi Code API 已连接 (异步直接调用)")
             print(f"[LLM] 使用模型: {self.model}")
             
         except Exception as e:
@@ -148,7 +138,7 @@ class LLMClient:
         if self.provider == "mock":
             return self._mock_response(messages)
 
-        # Kimi 使用 httpx 直接请求
+        # Kimi 使用 httpx 异步请求
         if self.provider == "kimi":
             try:
                 import time
@@ -156,7 +146,7 @@ class LLMClient:
                 
                 print(f"[LLM] 调用 {self.model}，请稍候...")
                 
-                response = self.http_client.post(
+                response = await self.http_client.post(
                     "/chat/completions",
                     json={
                         "model": self.model,
@@ -170,7 +160,7 @@ class LLMClient:
                 
                 elapsed = time.time() - start
                 result = data["choices"][0]["message"]["content"]
-                print(f"[LLM] ✅ 调用成功，耗时 {elapsed:.2f}秒，返回: {result[:50]}...")
+                print(f"[LLM] ✅ 调用成功，耗时 {elapsed:.2f}秒")
                 
                 self.total_tokens += data["usage"]["total_tokens"]
                 return result
