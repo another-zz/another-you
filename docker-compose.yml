@@ -17,19 +17,15 @@ services:
       VIEW_DISTANCE: 10
       ENABLE_COMMAND_BLOCK: "true"
       SPAWN_PROTECTION: 0
-      # 禁用自动下载配置（避免网络问题）
+      # 禁用自动下载配置
       SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
-      # 代理配置
-      HTTP_PROXY: "http://host.docker.internal:7890"
-      HTTPS_PROXY: "http://host.docker.internal:7890"
-      NO_PROXY: "localhost,127.0.0.1"
     volumes:
       - ./world/minecraft:/data
+      # 预置配置文件，避免下载
+      - ./config/paper-global.yml:/config/paper-global.yml:ro
+      - ./config/paper-world-defaults.yml:/config/paper-world-defaults.yml:ro
     restart: unless-stopped
-    # 如果需要代理
-    # network_mode: host
     
-  # 可选：Web面板
   web:
     image: nginx:alpine
     container_name: another-you-web
@@ -37,5 +33,3 @@ services:
       - "8080:80"
     volumes:
       - ./ui/web:/usr/share/nginx/html:ro
-    depends_on:
-      - minecraft

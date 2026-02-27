@@ -16,7 +16,7 @@ import random
 from datetime import datetime
 from typing import Dict, List
 
-from core.llm_brain_v10 import LLMBrain
+from core.llm_brain import LLMBrain
 from core.memory_stream import MemoryStream
 from core.mc_connector import MinecraftConnector
 from core.skill_executor import SkillExecutor, SkillLibrary

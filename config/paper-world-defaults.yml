@@ -1,0 +1,27 @@
+# Paper World Defaults
+_version: 28
+
+anticheat:
+  anti-xray:
+    enabled: false
+
+chunks:
+  auto-save-interval: default
+  delay-chunk-unloads-by: 10s
+
+entities:
+  spawners:
+    max-nearby-entities: 6
+    max-spawn-range: 4
+    min-delay-ticks: 200
+    max-delay-ticks: 800
+    spawn-count: 4
+
+environment:
+  disable-explosion-knockback: false
+  disable-ice-and-snow: false
+
+hopper:
+  cooldown-when-full: true
+  disable-move-event: false
+  ignore-occluding-blocks: true

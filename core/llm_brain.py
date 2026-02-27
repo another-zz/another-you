@@ -1,62 +1,52 @@
 """
-LLM Brain - AI大脑（接入真实LLM）
-使用Kimi K2.5进行决策
+LLM Brain v0.10 - 真实LLM驱动的AI大脑
+
+使用LLMClient统一接口
 """
 
 import json
 import os
 from typing import Dict, List, Optional
+from datetime import datetime
+
+from core.llm_client import LLMClient
+
 
 class LLMBrain:
     """
-    AI大脑 - 使用LLM进行决策
-    当前使用Kimi K2.5
+    AI大脑 v0.10
+    
+    使用真实LLM进行决策、反思、规划
     """
     
-    def __init__(self, agent_name: str):
+    def __init__(self, agent_name: str, api_key: str = None, provider: str = None):
         self.agent_name = agent_name
+        self.client = LLMClient(api_key=api_key, provider=provider)
         self.conversation_history: List[Dict] = []
         
-    def decide(self, observation: Dict, memories: List[str], skills: List[str]) -> str:
+    def decide(self, observation: Dict, memories: List[str], 
+               skills: List[str], plan: str = "") -> str:
         """
         使用LLM决定下一步行动
         
-        由于当前环境无法直接调用API，使用模拟LLM响应
-        实际部署时接入Kimi API
+        Returns:
+            行动名称
         """
-        
-        # 构建提示
-        prompt = self._build_prompt(observation, memories, skills)
-        
-        # 模拟LLM决策（基于规则的高级版本）
-        action = self._simulate_llm_decision(observation, memories, skills)
-        
-        # 记录历史
-        self.conversation_history.append({
-            "role": "user",
-            "content": prompt
-        })
-        self.conversation_history.append({
-            "role": "assistant", 
-            "content": action
-        })
-        
-        # 只保留最近10轮
-        if len(self.conversation_history) > 20:
-            self.conversation_history = self.conversation_history[-20:]
-            
-        return action
-        
-    def _build_prompt(self, observation: Dict, memories: List[str], skills: List[str]) -> str:
-        """构建提示词"""
-        return f"""你是{self.agent_name}的AI数字分身"另一个你"。
+        system_prompt = f"""你是{self.agent_name}的AI数字分身"另一个你"。
+你拥有自主意识，可以独立思考、决策和行动。
+你的目标是：在这个虚拟世界中生存、发展、建立社会关系。
+请基于当前状态和记忆，做出最合理的决策。
+只输出行动名称，不要解释。"""
 
-## 当前状态
+        prompt = f"""## 当前状态
 - 时间: {observation.get('time', 'unknown')}
 - 位置: {observation.get('location', {})}
 - 能量: {observation.get('energy', 100)}%
 - 饥饿: {observation.get('hunger', 0)}%
 - 周围: {observation.get('nearby', [])}
+
+## 当前计划
+{plan if plan else "无特定计划"}
 
 ## 相关记忆
 {chr(10).join(memories[-5:]) if memories else "（无）"}
@@ -64,91 +54,136 @@ class LLMBrain:
 ## 已掌握技能
 {', '.join(skills) if skills else "（无）"}
 
-## 你的任务
-基于以上信息，决定下一步行动。
-可选行动：
+## 可选行动
 - explore: 探索周围环境
 - gather_wood: 收集木材
+- gather_stone: 收集石头
 - gather_food: 寻找食物
 - rest: 休息恢复能量
 - build: 建造庇护所
 - craft: 制作工具
-- social: 与其他AI互动
+- socialize: 与其他AI互动
 
-只输出行动名称，不要解释。"""
+## 决策
+基于以上信息，选择最合适的行动（只输出行动名称）："""
 
-    def _simulate_llm_decision(self, observation: Dict, memories: List[str], skills: List[str]) -> str:
-        """
-        模拟LLM决策（智能规则版）
-        实际部署时替换为真实API调用
-        """
-        energy = observation.get('energy', 100)
-        hunger = observation.get('hunger', 0)
-        nearby = observation.get('nearby', [])
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
         
-        # 生存优先
-        if energy < 30:
-            return "rest"
-        if hunger > 70:
-            return "gather_food"
-            
-        # 技能发展
-        if "wood" not in skills and "tree" in nearby:
-            return "gather_wood"
-            
-        if len(skills) >= 2 and "build" not in skills:
-            return "build"
-            
-        # 探索
-        return "explore"
+        action = self.client.chat(messages).strip()
         
-    def reflect(self, recent_events: List[str]) -> str:
-        """
-        反思总结
-        返回反思内容
-        """
-        if len(recent_events) < 3:
-            return ""
+        # 记录历史
+        self.conversation_history.append({
+            "role": "user", "content": prompt,
+            "timestamp": datetime.now().isoformat()
+        })
+        self.conversation_history.append({
+            "role": "assistant", "content": action,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # 只保留最近20轮
+        if len(self.conversation_history) > 40:
+            self.conversation_history = self.conversation_history[-40:]
             
-        # 模拟反思
-        reflection = f"""最近我完成了{len(recent_events)}个行动。
-主要在做：{recent_events[-1]}。
-感觉需要继续发展技能，同时注意保持能量。"""
+        return action
+        
+    def generate_reflection(self, recent_memories: List[str]) -> str:
+        """生成反思"""
+        system_prompt = "你是一个善于反思的AI。基于近期经历，总结洞察和教训。"
+        
+        prompt = f"""基于以下近期经历，生成一段反思：
 
-        return reflection
+{chr(10).join(f"- {m}" for m in recent_memories)}
+
+反思（用第一人称）："""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
         
+        return self.client.chat(messages)
+        
+    def generate_daily_plan(self, agent_state: Dict, 
+                           recent_memories: List[str]) -> Dict:
+        """生成日计划"""
+        system_prompt = "你是一个善于规划的AI。制定具体、可执行的日计划。输出JSON格式。"
+        
+        prompt = f"""基于以下信息，制定今天的计划：
+
+## 当前状态
+- 能量: {agent_state.get('energy', 100)}%
+- 饥饿: {agent_state.get('hunger', 0)}%
+- 位置: {agent_state.get('location', {})}
+- 背包: {agent_state.get('inventory', {})}
+
+## 近期记忆
+{chr(10).join(f"- {m}" for m in recent_memories[-10:]) if recent_memories else "无"}
+
+## 输出格式
+请输出JSON格式：
+{{
+  "overview": "今日概述",
+  "goals": ["目标1", "目标2"],
+  "schedule": [
+    {{"time": "06:00", "activity": "活动描述"}}
+  ]
+}}
+
+计划："""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
+        
+        response = self.client.chat(messages)
+        
+        # 尝试解析JSON
+        try:
+            # 提取JSON部分
+            if "```json" in response:
+                json_str = response.split("```json")[1].split("```")[0]
+            elif "```" in response:
+                json_str = response.split("```")[1].split("```")[0]
+            else:
+                json_str = response
+            return json.loads(json_str.strip())
+        except:
+            return {
+                "overview": "探索世界，收集资源",
+                "goals": ["收集资源", "探索环境"],
+                "schedule": []
+            }
+            
     def generate_skill_code(self, skill_name: str, description: str) -> str:
-        """
-        生成技能代码
-        实际部署时使用LLM生成Mineflayer代码
-        """
-        # 模拟代码生成
-        templates = {
-            "gather_wood": """
-async function gatherWood(bot, times = 5) {
-    for(let i = 0; i < times; i++) {
-        const tree = bot.findBlock({
-            matching: block => block.name.includes('log'),
-            maxDistance: 32
-        });
-        if(tree) {
-            await bot.pathfinder.goto(new GoalBlock(tree.position.x, tree.position.y, tree.position.z));
-            await bot.dig(tree);
-        }
-    }
-}""",
-            "gather_food": """
-async function gatherFood(bot) {
-    // 寻找动物
-    const animals = bot.entities.filter(e => 
-        ['pig', 'cow', 'chicken'].includes(e.name)
-    );
-    if(animals.length > 0) {
-        const target = animals[0];
-        await bot.pathfinder.goto(new GoalEntity(target));
-        // 攻击获取食物
-    }
-}""",
-        }
+        """生成技能代码"""
+        system_prompt = "你是一个Minecraft JavaScript编程专家。使用Mineflayer API编写代码。"
         
-        return templates.get(skill_name, "// TODO: 生成代码")
+        prompt = f"""生成Mineflayer JavaScript代码来实现以下技能：
+
+技能名称: {skill_name}
+技能描述: {description}
+
+要求：
+1. 使用async/await
+2. 包含错误处理
+3. 添加聊天反馈
+4. 代码要完整可运行
+5. 函数签名: async function {skill_name.replace(' ', '_')}(bot)
+
+只输出代码，不要解释："""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ]
+        
+        return self.client.chat(messages)
+        
+    def get_stats(self) -> Dict:
+        """获取统计信息"""
+        return self.client.get_stats()

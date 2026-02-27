@@ -1,0 +1,27 @@
+# Paper Global Configuration
+_version: 28
+
+chunk-loading:
+  autoconfig-send-distance: true
+  enable-frustum-priority: false
+  global-max-chunk-load-rate: -1.0
+  global-max-chunk-send-rate: -1.0
+  global-max-concurrent-loads: 500.0
+  max-concurrent-sends: 2
+  min-load-radius: 2
+  player-max-chunk-load-rate: -1.0
+  player-max-concurrent-loads: 20.0
+  target-player-chunk-send-rate: 100.0
+
+logging:
+  deobfuscate-stacktraces: true
+  log-player-ip-addresses: true
+
+messages:
+  no-permission: '&cI''m sorry, but you do not have permission to perform this command.'
+
+spark:
+  enabled: true
+
+timings:
+  enabled: false
