@@ -34,7 +34,9 @@ class LLMClient:
         self.total_tokens = 0
 
         # 初始化客户端
-        if self.provider == "kimi":
+        if self.provider == "litellm":
+            self._init_litellm()
+        elif self.provider == "kimi":
             self._init_kimi()
         elif self.provider == "openai":
             self._init_openai()
@@ -43,7 +45,9 @@ class LLMClient:
 
     def _detect_provider(self) -> str:
         """检测可用的API提供商"""
-        if os.getenv("KIMI_API_KEY"):
+        if os.getenv("LITELLM_API_KEY"):
+            return "litellm"
+        elif os.getenv("KIMI_API_KEY"):
             return "kimi"
         elif os.getenv("OPENAI_API_KEY"):
             return "openai"
@@ -52,7 +56,9 @@ class LLMClient:
 
     def _get_api_key(self) -> Optional[str]:
         """获取API Key"""
-        if self.provider == "kimi":
+        if self.provider == "litellm":
+            return os.getenv("LITELLM_API_KEY", "dummy-key")
+        elif self.provider == "kimi":
             return os.getenv("KIMI_API_KEY")
         elif self.provider == "openai":
             return os.getenv("OPENAI_API_KEY")
@@ -98,6 +104,26 @@ class LLMClient:
             print(f"[LLM] 错误: {e}")
             self.provider = "mock"
 
+    def _init_litellm(self):
+        """初始化LiteLLM代理客户端"""
+        try:
+            from openai import OpenAI
+            
+            # LiteLLM 代理地址
+            self.base_url = os.getenv("LITELLM_BASE_URL", "http://localhost:4000/v1")
+            self.model = os.getenv("LITELLM_MODEL", "kimi-coding")
+            
+            self.client = OpenAI(
+                api_key=self.api_key,
+                base_url=self.base_url
+            )
+            print(f"[LLM] ✅ LiteLLM 代理已连接: {self.base_url}")
+            print(f"[LLM] 使用模型: {self.model}")
+        except ImportError as e:
+            print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
+            print(f"[LLM] 错误: {e}")
+            self.provider = "mock"
+
     def _init_openai(self):
         """初始化OpenAI客户端"""
         try:
@@ -137,9 +163,15 @@ class LLMClient:
                 print(f"[LLM] Kimi Code 调用失败: {e}")
                 return self._mock_response(messages)
 
-        # 普通 Kimi 使用 OpenAI SDK
+        # 普通 Kimi / OpenAI / LiteLLM 使用 OpenAI SDK
         try:
-            model = "kimi-k2.5" if self.provider == "kimi" else "gpt-4"
+            # 根据 provider 选择模型
+            if self.provider == "litellm":
+                model = getattr(self, 'model', 'kimi-coding')
+            elif self.provider == "kimi":
+                model = "kimi-k2.5"
+            else:
+                model = "gpt-4"
 
             response = self.client.chat.completions.create(
                 model=model,

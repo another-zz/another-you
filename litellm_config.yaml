@@ -1,0 +1,27 @@
+# LiteLLM 配置文件
+# 用于代理 Kimi Code API
+
+model_list:
+  - model_name: "kimi-coding"
+    litellm_params:
+      model: "openai/kimi-k2.5"
+      api_base: "https://api.kimi.com/coding/v1"
+      api_key: "os.environ/KIMI_API_KEY"
+
+  # 可以添加更多模型
+  # - model_name: "kimi-k2"
+  #   litellm_params:
+  #     model: "openai/kimi-k2-turbo-preview"
+  #     api_base: "https://api.moonshot.cn/v1"
+  #     api_key: "os.environ/KIMI_API_KEY"
+
+# 服务器设置
+server:
+  port: 4000
+  host: "0.0.0.0"
+
+# 可选：启用预算控制
+# litellm_settings:
+#   budget_config:
+#     kimi-coding:
+#       budget_limit: 10.0  # $10 USD
