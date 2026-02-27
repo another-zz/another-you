@@ -67,7 +67,11 @@ class LLMBrain:
 ## 决策建议
 - 如果能量充足，优先 explore 探索新区域
 - 定期移动可以发现有价值的资源
-- 只输出行动名称，不要解释"""
+- **重要：只输出一个行动名称，不要输出 JSON 或解释**
+- 有效选项: explore, gather_wood, gather_stone, gather_food, rest, build, craft, socialize
+
+## 决策
+基于以上信息，选择最合适的行动（只输出单个行动名称，如: explore）："""
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -166,7 +170,7 @@ class LLMBrain:
                 "schedule": []
             }
             
-    def generate_skill_code(self, skill_name: str, description: str) -> str:
+    async def generate_skill_code(self, skill_name: str, description: str) -> str:
         """生成技能代码"""
         system_prompt = "你是一个Minecraft JavaScript编程专家。使用Mineflayer API编写代码。"
         
@@ -189,7 +193,7 @@ class LLMBrain:
             {"role": "user", "content": prompt}
         ]
         
-        return self.client.chat(messages)
+        return await self.client.chat(messages)
         
     def get_stats(self) -> Dict:
         """获取统计信息"""
