@@ -59,7 +59,7 @@ class LLMClient:
         return None
         
     def _init_kimi(self):
-        """初始化Kimi客户端"""
+        """初始化Kimi客户端 - 支持 Kimi Code"""
         import sys
         import subprocess
         
@@ -80,9 +80,20 @@ class LLMClient:
         
         try:
             from openai import OpenAI
+            
+            # 检测是 Kimi Code 还是普通 Kimi
+            if "kimi" in self.api_key.lower() and "code" in self.api_key.lower():
+                # Kimi Code API
+                base_url = "https://kimi.moonshot.cn/api/v1"
+                print(f"[LLM] 使用 Kimi Code API")
+            else:
+                # 普通 Kimi API
+                base_url = "https://api.moonshot.cn/v1"
+                print(f"[LLM] 使用 Kimi API")
+            
             self.client = OpenAI(
                 api_key=self.api_key,
-                base_url="https://api.moonshot.cn/v1"
+                base_url=base_url
             )
             print(f"[LLM] ✅ Kimi API 已连接")
         except ImportError as e:
@@ -132,7 +143,12 @@ class LLMClient:
             return response.choices[0].message.content
             
         except Exception as e:
-            print(f"[LLM] API调用失败: {e}")
+            error_msg = str(e)
+            if "401" in error_msg or "Authentication" in error_msg:
+                print(f"[LLM] API认证失败，切换到mock模式")
+                self.provider = "mock"
+            else:
+                print(f"[LLM] API调用失败: {error_msg[:100]}")
             return self._mock_response(messages)
             
     def _mock_response(self, messages: List[Dict]) -> str:
