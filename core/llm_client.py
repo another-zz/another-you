@@ -196,11 +196,10 @@ class LLMClient:
 
         except Exception as e:
             error_msg = str(e)
+            print(f"[LLM] API调用失败: {error_msg}")
             if "401" in error_msg or "Authentication" in error_msg:
                 print(f"[LLM] API认证失败，切换到mock模式")
                 self.provider = "mock"
-            else:
-                print(f"[LLM] API调用失败: {error_msg[:100]}")
             return self._mock_response(messages)
 
     def _mock_response(self, messages: List[Dict]) -> str:
