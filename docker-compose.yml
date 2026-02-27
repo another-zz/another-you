@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   minecraft:
     # 使用自建镜像，禁用自动下载

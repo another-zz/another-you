@@ -10,25 +10,20 @@ ENV VERSION=1.20.4
 ENV SKIP_GENERIC_PACK_UPDATE_CHECK=true
 ENV DISABLE_HEALTHCHECK=true
 
-# 创建假的 mc-image-helper 脚本，禁用自动下载
+# 备份原始的 mc-image-helper
 RUN mv /usr/local/bin/mc-image-helper /usr/local/bin/mc-image-helper.orig
 
 # 创建替换脚本，跳过下载操作
-RUN cat > /usr/local/bin/mc-image-helper << 'EOF'
-#!/bin/bash
-# 假的 mc-image-helper，禁用自动下载
-
-# 检查是否是 mcopy 命令（下载配置文件的命令）
-if [[ "$1" == "mcopy" ]]; then
-    echo "[INFO] Skipping config download (disabled in AnotherYou image)"
-    exit 0
-fi
-
-# 其他命令调用原始程序
-exec /usr/local/bin/mc-image-helper.orig "$@"
-EOF
-
-RUN chmod +x /usr/local/bin/mc-image-helper
+RUN echo '#!/bin/bash' > /usr/local/bin/mc-image-helper && \
+    echo '# 假的 mc-image-helper，禁用自动下载' >> /usr/local/bin/mc-image-helper && \
+    echo '' >> /usr/local/bin/mc-image-helper && \
+    echo 'if [[ "$1" == "mcopy" ]]; then' >> /usr/local/bin/mc-image-helper && \
+    echo '    echo "[INFO] Skipping config download (disabled in AnotherYou image)"' >> /usr/local/bin/mc-image-helper && \
+    echo '    exit 0' >> /usr/local/bin/mc-image-helper && \
+    echo 'fi' >> /usr/local/bin/mc-image-helper && \
+    echo '' >> /usr/local/bin/mc-image-helper && \
+    echo 'exec /usr/local/bin/mc-image-helper.orig "$@"' >> /usr/local/bin/mc-image-helper && \
+    chmod +x /usr/local/bin/mc-image-helper
 
 # 预下载 Paper 服务器到镜像中（避免运行时下载）
 RUN mkdir -p /data && \
