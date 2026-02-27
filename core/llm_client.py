@@ -128,7 +128,7 @@ class LLMClient:
             print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
             self.provider = "mock"
 
-    def chat(self, messages: List[Dict], temperature: float = 0.7,
+    async def chat(self, messages: List[Dict], temperature: float = 0.7,
              max_tokens: int = 2000) -> str:
         """
         调用LLM进行对话
