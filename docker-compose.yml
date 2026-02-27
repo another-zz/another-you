@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   minecraft:
-    image: itzg/minecraft-server:java21
+    # 使用自建镜像，禁用自动下载
+    build:
+      context: .
+      dockerfile: Dockerfile.mc
     container_name: another-you-mc
     ports:
       - "25565:25565"
@@ -17,20 +20,8 @@ services:
       VIEW_DISTANCE: 10
       ENABLE_COMMAND_BLOCK: "true"
       SPAWN_PROTECTION: 0
-      # 禁用自动下载
-      SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
-      # 设置已有配置文件路径
-      COPY_CONFIG_DEST: "/data/config"
     volumes:
       - ./world/minecraft:/data
-      # 预置所有需要的配置文件
-      - ./config/paper-global.yml:/data/config/paper-global.yml:ro
-      - ./config/paper-world-defaults.yml:/data/config/paper-world-defaults.yml:ro
-      - ./config/spigot.yml:/data/config/spigot.yml:ro
-      - ./config/bukkit.yml:/data/config/bukkit.yml:ro
-    # 阻止容器访问外部网络（除必要端口外）
-    sysctls:
-      - net.ipv4.conf.all.route_localnet=1
     restart: unless-stopped
     
   web:
