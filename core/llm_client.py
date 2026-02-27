@@ -81,15 +81,9 @@ class LLMClient:
         try:
             from openai import OpenAI
             
-            # 检测是 Kimi Code 还是普通 Kimi
-            if "kimi" in self.api_key.lower() and "code" in self.api_key.lower():
-                # Kimi Code API
-                base_url = "https://kimi.moonshot.cn/api/v1"
-                print(f"[LLM] 使用 Kimi Code API")
-            else:
-                # 普通 Kimi API
-                base_url = "https://api.moonshot.cn/v1"
-                print(f"[LLM] 使用 Kimi API")
+            # Kimi Code API 地址
+            base_url = "https://api.kimi.com/coding/"
+            print(f"[LLM] 使用 Kimi Code API: {base_url}")
             
             self.client = OpenAI(
                 api_key=self.api_key,
