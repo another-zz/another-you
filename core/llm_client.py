@@ -24,9 +24,11 @@ class LLMClient:
     3. 模拟模式
     """
 
-    def __init__(self, api_key: str = None, provider: str = None):
+    def __init__(self, api_key: str = None, provider: str = None, api_base: str = None, model: str = None):
         self.provider = provider or self._detect_provider()
         self.api_key = api_key or self._get_api_key()
+        self.api_base = api_base
+        self.model = model
         self.client = None
 
         # 统计
@@ -106,16 +108,17 @@ class LLMClient:
         try:
             from openai import OpenAI
             
-            # LiteLLM 代理地址
-            self.base_url = os.getenv("LITELLM_BASE_URL", "http://localhost:4000/v1")
-            self.model = os.getenv("LITELLM_MODEL", "kimi-coding")
+            # 使用传入的 api_base 或环境变量
+            base_url = self.api_base or os.getenv("LITELLM_BASE_URL", "http://localhost:4000/v1")
+            model = self.model or os.getenv("LITELLM_MODEL", "kimi-coding")
             
             self.client = OpenAI(
-                api_key=self.api_key,
-                base_url=self.base_url
+                api_key=self.api_key or "dummy-key",
+                base_url=base_url
             )
-            print(f"[LLM] ✅ LiteLLM 代理已连接: {self.base_url}")
-            print(f"[LLM] 使用模型: {self.model}")
+            self.model = model
+            print(f"[LLM] ✅ LiteLLM 代理已连接: {base_url}")
+            print(f"[LLM] 使用模型: {model}")
         except ImportError as e:
             print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
             print(f"[LLM] 错误: {e}")

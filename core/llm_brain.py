@@ -19,9 +19,9 @@ class LLMBrain:
     使用真实LLM进行决策、反思、规划
     """
     
-    def __init__(self, agent_name: str, api_key: str = None, provider: str = None):
+    def __init__(self, agent_name: str, api_key: str = None, provider: str = None, api_base: str = None, model: str = None):
         self.agent_name = agent_name
-        self.client = LLMClient(api_key=api_key, provider=provider)
+        self.client = LLMClient(api_key=api_key, provider=provider, api_base=api_base, model=model)
         self.conversation_history: List[Dict] = []
         
     def decide(self, observation: Dict, memories: List[str], 
