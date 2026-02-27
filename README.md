@@ -115,12 +115,27 @@ $ python start.py --name="小明"
    背包: {'wood': 25, 'stone': 10}
 ```
 
-## 📄 许可证
-
-MIT License
-
 ## 🤝 如何贡献
-欢迎任何形式的贡献！无论你是想提交代码、报告bug、提出新功能，还是分享想法，都非常欢迎。
 
-提交 Issue 或 Pull Request
-加入讨论：GitHub Discussions
+1. **Fork** 本仓库
+2. 创建 feature 分支 (`git checkout -b feature/awesome-feature`)
+3. 提交改动 (`git commit -m 'Add awesome feature'`)
+4. 推送到分支 (`git push origin feature/awesome-feature`)
+5. 提交 **Pull Request**
+
+详细贡献指南 → [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 📄 License
+
+本项目采用 **MIT License** —— 自由使用、修改、分发。
+
+---
+
+> "现实暂停，另一个你继续。"
+
+欢迎Star ⭐ 支持我们！
+有任何想法随时在 [Issues](https://github.com/another-zz/another-you/issues) 提出～
+
+[![Star History Chart](https://api.star-history.com/svg?repos=another-zz/another-you&type=Date)](https://star-history.com/#another-zz/another-you&Date)
