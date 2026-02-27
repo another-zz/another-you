@@ -81,35 +81,21 @@ class LLMClient:
         try:
             from openai import OpenAI
             
-            # 尝试多个可能的 API 地址
-            base_urls = [
-                "https://api.kimi.com/coding",    # Kimi Code (去掉末尾/)
-                "https://api.kimi.com/coding/v1", # 可能的 v1 路径
-                "https://api.moonshot.cn/v1",     # 官方 Kimi
-            ]
+            # 检测是 Kimi Code 还是普通 Kimi
+            if "kimi" in self.api_key.lower() and "code" in self.api_key.lower():
+                # Kimi Code API
+                base_url = "https://kimi.moonshot.cn/api/v1"
+                print(f"[LLM] 使用 Kimi Code API")
+            else:
+                # 普通 Kimi API
+                base_url = "https://api.moonshot.cn/v1"
+                print(f"[LLM] 使用 Kimi API")
             
-            for base_url in base_urls:
-                try:
-                    self.client = OpenAI(
-                        api_key=self.api_key,
-                        base_url=base_url
-                    )
-                    # 测试连接
-                    self.client.models.list()
-                    print(f"[LLM] 使用 API: {base_url}")
-                    print(f"[LLM] ✅ Kimi API 已连接")
-                    return
-                except Exception as e:
-                    print(f"[LLM] 尝试 {base_url}: {str(e)[:50]}")
-                    continue
-            
-            # 都失败了，使用第一个
             self.client = OpenAI(
                 api_key=self.api_key,
-                base_url=base_urls[0]
+                base_url=base_url
             )
-            print(f"[LLM] 使用 API: {base_urls[0]}")
-            print(f"[LLM] ⚠️ 连接测试失败，但将继续尝试")
+            print(f"[LLM] ✅ Kimi API 已连接")
         except ImportError as e:
             print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
             print(f"[LLM] 错误详情: {e}")
@@ -144,37 +130,22 @@ class LLMClient:
             return self._mock_response(messages)
             
         try:
-            # Kimi Code 模型名称
-            models = ["kimi-coding", "kimi-k2-turbo-preview", "kimi-k2.5", "kimi"]
+            model = "kimi-k2.5" if self.provider == "kimi" else "gpt-4"
             
-            for model in models:
-                try:
-                    response = self.client.chat.completions.create(
-                        model=model,
-                        messages=messages,
-                        temperature=temperature,
-                        max_tokens=max_tokens
-                    )
-                    self.total_tokens += response.usage.total_tokens
-                    return response.choices[0].message.content
-                except Exception as e:
-                    if "model" in str(e).lower() or "not found" in str(e).lower():
-                        continue  # 尝试下一个模型
-                    raise  # 其他错误直接抛出
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
             
-            # 所有模型都失败
-            print(f"[LLM] 所有模型都不可用，切换到mock模式")
-            self.provider = "mock"
-            return self._mock_response(messages)
+            self.total_tokens += response.usage.total_tokens
+            return response.choices[0].message.content
             
         except Exception as e:
             error_msg = str(e)
             if "401" in error_msg or "Authentication" in error_msg:
                 print(f"[LLM] API认证失败，切换到mock模式")
-                self.provider = "mock"
-            elif "404" in error_msg:
-                print(f"[LLM] API地址或模型不存在，切换到mock模式")
-                print(f"[LLM] 请检查 API 地址和模型名称")
                 self.provider = "mock"
             else:
                 print(f"[LLM] API调用失败: {error_msg[:100]}")
