@@ -198,6 +198,7 @@ class Agent:
         action = self._sanitize_action(action)
 
         # 5. 执行
+        print(f"  [{self.player_name}] 执行动作: {action}")
         result = await self._execute(action)
         print(f"  [{self.player_name}] 执行结果: {result}")
 
@@ -376,6 +377,8 @@ class Agent:
 
     async def _execute_sim(self, action: str) -> str:
         """模拟执行 - 修复状态变化"""
+        print(f"    [{self.player_name}] _execute_sim: {action}")
+        
         effects = {
             "rest": lambda: self._mod(energy=+20, hunger=+5),  # 休息恢复能量，但会增加饥饿
             "gather_wood": lambda: self._mod(energy=-10, hunger=+8) or self._add_item("wood", 3),
