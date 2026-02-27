@@ -175,19 +175,22 @@ async def run_world(agent_names, mc_host, mc_port, api_key=None, provider=None, 
         while tick < 1000:  # 最多1000个tick
             tick += 1
 
-            for agent in agents:
-                # 执行一个tick
+            # 并发执行所有 AI 的 tick
+            async def run_agent_tick(agent):
                 print(f"[Tick {tick}] {agent.player_name} 开始决策...")
                 await agent._life_tick()
                 print(f"[Tick {tick}] {agent.player_name} 决策完成")
-
-                # 更新状态到全局（包含最新社交关系）
+                
+                # 更新状态到全局
                 update_agent_state(agent)
                 print(f"[Tick {tick}] {agent.player_name} 状态已更新")
-
+                
                 # 记录行动日志
                 if agent.total_actions % 5 == 0:
                     add_log(agent.player_name, f"执行了行动 #{agent.total_actions}")
+            
+            # 同时运行所有 AI
+            await asyncio.gather(*[run_agent_tick(agent) for agent in agents])
 
             # 额外更新一次社交状态（确保社交关系变化被捕获）
             for agent in agents:
