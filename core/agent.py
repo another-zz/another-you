@@ -405,8 +405,10 @@ class Agent:
         self.inventory[item] = self.inventory.get(item, 0) + count
 
     def _move(self):
+        old_loc = self.location.copy()
         self.location["x"] += random.randint(-10, 10)
         self.location["z"] += random.randint(-10, 10)
+        print(f"  [{self.player_name}] 移动: {old_loc} -> {self.location}")
 
     def _perceive(self) -> Dict:
         """感知环境"""
