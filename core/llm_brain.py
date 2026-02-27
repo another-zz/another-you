@@ -74,6 +74,10 @@ class LLMBrain:
         
         action = self.client.chat(messages).strip()
         
+        # 打印 LLM 输入输出日志
+        print(f"  [LLM] 输入: {prompt[:80]}...")
+        print(f"  [LLM] 输出: {action}")
+        
         # 记录历史
         self.conversation_history.append({
             "role": "user", "content": prompt,

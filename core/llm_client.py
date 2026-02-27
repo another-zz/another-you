@@ -191,8 +191,11 @@ class LLMClient:
                 max_tokens=max_tokens
             )
 
+            result = response.choices[0].message.content
+            print(f"[LLM] ✅ 调用成功，返回: {result[:50]}...")
+            
             self.total_tokens += response.usage.total_tokens
-            return response.choices[0].message.content
+            return result
 
         except Exception as e:
             error_msg = str(e)
