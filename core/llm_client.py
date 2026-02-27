@@ -45,10 +45,12 @@ class LLMClient:
 
     def _detect_provider(self) -> str:
         """检测可用的API提供商"""
-        if os.getenv("LITELLM_API_KEY"):
-            return "litellm"
+        if os.getenv("ANTHROPIC_API_KEY") and "moonshot" in (os.getenv("ANTHROPIC_BASE_URL", "")):
+            return "kimi"
         elif os.getenv("KIMI_API_KEY"):
             return "kimi"
+        elif os.getenv("LITELLM_API_KEY"):
+            return "litellm"
         elif os.getenv("OPENAI_API_KEY"):
             return "openai"
         else:
@@ -56,10 +58,11 @@ class LLMClient:
 
     def _get_api_key(self) -> Optional[str]:
         """获取API Key"""
-        if self.provider == "litellm":
+        if self.provider == "kimi":
+            # 优先使用 ANTHROPIC_API_KEY (Claude Code 方式)
+            return os.getenv("ANTHROPIC_API_KEY") or os.getenv("KIMI_API_KEY")
+        elif self.provider == "litellm":
             return os.getenv("LITELLM_API_KEY", "dummy-key")
-        elif self.provider == "kimi":
-            return os.getenv("KIMI_API_KEY")
         elif self.provider == "openai":
             return os.getenv("OPENAI_API_KEY")
         return None
@@ -70,13 +73,17 @@ class LLMClient:
             # 尝试使用 Anthropic SDK
             from anthropic import Anthropic
             
+            # 使用环境变量中的 base_url 或默认
+            base_url = os.getenv("ANTHROPIC_BASE_URL", "https://api.moonshot.cn/anthropic/")
+            
             self.client = Anthropic(
                 api_key=self.api_key,
-                base_url="https://api.moonshot.cn/anthropic/"
+                base_url=base_url
             )
             self.model = "claude-sonnet-4-20250514"  # Kimi K2 使用这个模型名
             self.use_anthropic = True
             print(f"[LLM] ✅ Kimi API 已连接 (Anthropic兼容接口)")
+            print(f"[LLM] 使用 base_url: {base_url}")
             
         except ImportError:
             # 回退到 OpenAI 接口
