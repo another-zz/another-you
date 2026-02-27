@@ -55,7 +55,7 @@ class LLMBrain:
 {', '.join(skills) if skills else "（无）"}
 
 ## 可选行动
-- explore: 探索周围环境
+- explore: 探索周围环境（会移动位置，推荐经常探索）
 - gather_wood: 收集木材
 - gather_stone: 收集石头
 - gather_food: 寻找食物
@@ -64,8 +64,10 @@ class LLMBrain:
 - craft: 制作工具
 - socialize: 与其他AI互动
 
-## 决策
-基于以上信息，选择最合适的行动（只输出行动名称）："""
+## 决策建议
+- 如果能量充足，优先 explore 探索新区域
+- 定期移动可以发现有价值的资源
+- 只输出行动名称，不要解释"""
 
         messages = [
             {"role": "system", "content": system_prompt},
