@@ -60,6 +60,24 @@ class LLMClient:
         
     def _init_kimi(self):
         """初始化Kimi客户端"""
+        import sys
+        import subprocess
+        
+        # 诊断信息
+        print(f"[LLM] 诊断 - Python: {sys.executable}")
+        print(f"[LLM] 诊断 - sys.path: {sys.path[:2]}")
+        
+        # 检查 openai 是否安装
+        try:
+            result = subprocess.run([sys.executable, "-c", "import openai; print(openai.__version__)"], 
+                                  capture_output=True, text=True, timeout=5)
+            if result.returncode == 0:
+                print(f"[LLM] 诊断 - openai版本: {result.stdout.strip()}")
+            else:
+                print(f"[LLM] 诊断 - openai检查失败: {result.stderr}")
+        except Exception as e:
+            print(f"[LLM] 诊断 - 检查失败: {e}")
+        
         try:
             from openai import OpenAI
             self.client = OpenAI(
@@ -68,10 +86,8 @@ class LLMClient:
             )
             print(f"[LLM] ✅ Kimi API 已连接")
         except ImportError as e:
-            import sys
             print(f"[LLM] ⚠️ 请安装openai库: pip install openai")
-            print(f"[LLM] 当前Python: {sys.executable}")
-            print(f"[LLM] 错误: {e}")
+            print(f"[LLM] 错误详情: {e}")
             self.provider = "mock"
             
     def _init_openai(self):
