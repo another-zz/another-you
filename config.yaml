@@ -25,9 +25,9 @@ economy:
   
 # LLM设置
 llm:
-  provider: "kimi"  # kimi / openai / mock / litellm
-  model: "k2p5"     # 或 kimi-coding (使用 LiteLLM 时)
-  api_key: ""       # 留空则从环境变量读取
-  api_base: ""      # LiteLLM 代理地址，如 http://127.0.0.1:4000/v1
+  provider: "litellm"  # kimi / openai / mock / litellm
+  model: "kimi-coding"  # 或 k2p5 (使用 Kimi 官方时)
+  api_key: "sk-1234"   # LiteLLM 随便填，或留空从环境变量读取
+  api_base: "http://127.0.0.1:4000/v1"  # LiteLLM 代理地址
   temperature: 0.7
   max_tokens: 2000
