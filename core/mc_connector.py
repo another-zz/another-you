@@ -34,6 +34,13 @@ class MinecraftConnector:
     def start(self) -> bool:
         """启动Mineflayer bot"""
         
+        # 检查node是否可用
+        try:
+            subprocess.run(['node', '--version'], capture_output=True, check=True)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("[MC] ⚠️ Node.js 未安装，切换到模拟模式")
+            return False
+        
         # 创建bot代码
         bot_code = self._generate_bot_code()
         
@@ -71,7 +78,11 @@ class MinecraftConnector:
                 return True
             else:
                 stderr = self.process.stderr.read()
-                print(f"[MC] 启动失败: {stderr}")
+                if "Cannot find module" in stderr:
+                    print(f"[MC] ⚠️ 缺少 mineflayer 模块，切换到模拟模式")
+                    print(f"[MC] 如需连接MC，请运行: npm install mineflayer mineflayer-pathfinder")
+                else:
+                    print(f"[MC] 启动失败: {stderr}")
                 return False
                 
         except Exception as e:

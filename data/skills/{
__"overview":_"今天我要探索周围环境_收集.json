@@ -1,0 +1,10 @@
+{
+  "name": "{\n__\"overview\":_\"今天我要探索周围环境_收集",
+  "description": "{\n  \"overview\": \"今天我要探索周围环境，收集资源，建立基础\",\n  \"goals\": [\"收集20个木头\", \"收集10个石头\", \"探索100格范围\"],\n  \"schedule\": [\n    {\"time\": \"06:00\", \"activity\": \"起床，检查环境\"},\n    {\"time\": \"07:00\", \"activity\": \"收集木头\"},\n    {\"time\": \"09:00\", \"activity\": \"收集石头\"},\n    {\"time\": \"12:00\", \"activity\": \"休息\"},\n    {\"time\": \"14:00\", \"activity\": \"探索\"},\n    {\"time\": \"18:00\", \"activity\": \"返回\"},\n    {\"time\": \"22:00\", \"activity\": \"休息\"}\n  ]\n}",
+  "code": "async function customTask(bot) {\n    bot.chat(\"开始执行任务: {\n  \"overview\": \"今天我要探索周围环境，收集资源，建立基础\",\n  \"goals\": [\"收集20个木头\", \"收集10个石头\", \"探索100格范围\"],\n  \"schedule\": [\n    {\"time\": \"06:00\", \"activity\": \"起床，检查环境\"},\n    {\"time\": \"07:00\", \"activity\": \"收集木头\"},\n    {\"time\": \"09:00\", \"activity\": \"收集石头\"},\n    {\"time\": \"12:00\", \"activity\": \"休息\"},\n    {\"time\": \"14:00\", \"activity\": \"探索\"},\n    {\"time\": \"18:00\", \"activity\": \"返回\"},\n    {\"time\": \"22:00\", \"activity\": \"休息\"}\n  ]\n}\");\n    // TODO: 实现具体逻辑\n    await bot.waitForTicks(20);\n}",
+  "language": "javascript",
+  "generated_at": "2026-02-27T12:15:15.727724",
+  "usage_count": 0,
+  "success_rate": 1.0,
+  "verified": false
+}

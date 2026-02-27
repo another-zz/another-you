@@ -1,0 +1,18 @@
+[
+  {
+    "id": "271c2a9de74b",
+    "content": "{\n  \"overview\": \"今天我要探索周围环境，收集资源，建立基础\",\n  \"goals\": [\"收集20个木头\", \"收集10个石头\", \"探索100格范围\"],\n  \"schedule\": [\n    {\"time\": \"06:00\", \"activity\": \"起床，检查环境\"},\n    {\"time\": \"07:00\", \"activity\": \"收集木头\"},\n    {\"time\": \"09:00\", \"activity\": \"收集石头\"},\n    {\"time\": \"12:00\", \"activity\": \"休息\"},\n    {\"time\": \"14:00\", \"activity\": \"探索\"},\n    {\"time\": \"18:00\", \"activity\": \"返回\"},\n    {\"time\": \"22:00\", \"activity\": \"休息\"}\n  ]\n}: 未知",
+    "memory_type": "observation",
+    "importance": 0.6,
+    "timestamp": "2026-02-27T12:15:32.990565",
+    "access_count": 0,
+    "last_access": null,
+    "source": "action",
+    "location": {
+      "x": 0,
+      "y": 64,
+      "z": 0
+    },
+    "related_memories": []
+  }
+]
