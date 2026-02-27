@@ -233,7 +233,7 @@ async def main():
     await asyncio.sleep(1)
     
     # 运行AI世界
-    await run_world(args.names, args.host, args.port, args.api_key)
+    await run_world(args.names, args.host, args.port, args.api_key, args.provider)
 
 if __name__ == "__main__":
     asyncio.run(main())
